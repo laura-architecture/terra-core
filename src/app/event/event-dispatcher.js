@@ -6,6 +6,7 @@ const chalk = require('chalk')
 const mda100_temperature = require('../../helpers/mda100-temperature')
 const sht1x_temperature = require('../../helpers/sht1x-temperature')
 const moment = require('moment')
+const createRandomEvent = require('../../helpers/simulation')
 
 /**
  * Initializes connections
@@ -16,9 +17,7 @@ const init = app => {
 
   io = require('socket.io')(server)
   io.on('connection', socket => {
-    console.log(
-      `${chalk.bold(' 🔌 Socket.io: connected on port ' + config.socket_io_port)}`
-    )
+    console.log(`${chalk.bold(' 🔌 Socket.io: connected on port ' + config.socket_io_port)}`)
   })
   server.listen(config.socket_io_port)
 }
@@ -55,9 +54,9 @@ const Event = e => {
  * @param {*} raw_event Raw event data
  */
 const dispatchEvent = raw_event => {
-  console.log(
-    ` ${chalk.bold('📥 Event received from mote ' + raw_event.source)}`
-  )
+  // console.log(
+  // ` ${chalk.bold('📥 Event received from mote ' + raw_event.source)}`
+  // )
 
   /*const curr_time = moment()
   console.log('curr_time:------------')
@@ -80,9 +79,14 @@ const dispatchEvent = raw_event => {
 
   convert(event)
 
-
   // send to web client via socket.io
-  io.emit('message', event)
+  // io.emit('message', event)
+
+  const e = createRandomEvent()
+
+  io.emit('message', e)
+
+  console.log(` ${chalk.bold('📥:', JSON.stringify(e))}`)
 
   // parse gateway_time
   event.gateway_time = new Date(event.gateway_time)

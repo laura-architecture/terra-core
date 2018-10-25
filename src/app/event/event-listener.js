@@ -43,7 +43,7 @@ const initSimulation = app => {
       d16: [random(490, 510), 0, 0, 0],
       target: 30
     }
-
+    
     dispatcher.dispatchEvent(fake_event)
   }, random(max_interval - 500, max_interval))
 }

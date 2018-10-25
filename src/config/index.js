@@ -36,6 +36,6 @@ config.networks = [
 config.id_temperature_event = 1
 config.id_luminosity_event = 2
 
-config.simulation_interval = 2000
+config.simulation_interval = 3*1000
 
 module.exports = config
