@@ -110,6 +110,8 @@ module.exports = function createRandomEvent() {
     source: 20, //random(10, 34), // should match ids from config file
     gateway_time: new Date().getTime() - random(400, 500),
     counter: i++,
-    temperature: values[process.env.NODE_ENV].shift(),
+    temperature: !['c1', 'c2', 'c3'].includes(process.env.NODE_ENV)
+      ? values.c1.shift()
+      : values[process.env.NODE_ENV].shift(),
   }
 }

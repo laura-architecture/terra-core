@@ -1,11 +1,9 @@
-const eventModel = require('./event-model')
+const db = require('../../helpers/fake-db')
 
 const getEvents = (req, res, next) => {
-  const events = eventModel.getEvents()
-
-  res.send(events)
+  res.send(db.events)
 }
 
 module.exports = {
-  getEvents
+  getEvents,
 }

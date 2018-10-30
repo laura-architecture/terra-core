@@ -7,6 +7,7 @@ const mda100_temperature = require('../../helpers/mda100-temperature')
 const sht1x_temperature = require('../../helpers/sht1x-temperature')
 const moment = require('moment')
 const createRandomEvent = require('../../helpers/simulation')
+const db = require('../../helpers/fake-db')
 
 /**
  * Initializes connections
@@ -83,6 +84,8 @@ const dispatchEvent = raw_event => {
   // io.emit('message', event)
 
   const e = createRandomEvent()
+
+  db.events.push(e)
 
   io.emit('message', e)
 
