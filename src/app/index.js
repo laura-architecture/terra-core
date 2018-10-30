@@ -1,3 +1,5 @@
+const sample = require('lodash/sample')
+
 module.exports.init = app => {
   // aliasing
   app.del = app.delete
@@ -6,4 +8,8 @@ module.exports.init = app => {
 
   require('./event').init(app)
   require('./network').init(app)
+
+  app.get('/api/attendees', (req, res) => {
+    res.send({ attendeesAvailable: sample([true, false]) })
+  })
 }
