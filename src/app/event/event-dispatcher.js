@@ -6,7 +6,7 @@ const chalk = require('chalk')
 const mda100_temperature = require('../../helpers/mda100-temperature')
 const sht1x_temperature = require('../../helpers/sht1x-temperature')
 const moment = require('moment')
-const createRandomEvent = require('../../helpers/simulation')
+const { createTemperatureEvent, createLocationEvent } = require('../../helpers/simulation')
 const db = require('../../helpers/fake-db')
 
 /**
@@ -83,16 +83,20 @@ const dispatchEvent = raw_event => {
   // send to web client via socket.io
   // io.emit('message', event)
 
-  const e = createRandomEvent()
+  const temperatureEvent = createTemperatureEvent()
+  const locationEvent = createLocationEvent()
 
-  db.events.push(e)
+  db.events.push(temperatureEvent)
+  db.events.push(locationEvent)
 
-  io.emit('message', e)
+  io.emit('message', temperatureEvent)
+  io.emit('message', locationEvent)
 
-  console.log(` ${chalk.bold('📥:', JSON.stringify(e))}`)
+  console.log(` ${chalk.bold('📥:', JSON.stringify(temperatureEvent))}`)
+  console.log(` ${chalk.bold('📥:', JSON.stringify(locationEvent))}`)
 
   // parse gateway_time
-  event.gateway_time = new Date(event.gateway_time)
+  // event.gateway_time = new Date(event.gateway_time)
 
   // save to database (ACHO QUE PARA O EXPERIMENTO NÃO PRECISA SALVAR NO BANCO TA GERANDO DELAY)
   //eventModel.addEvent(event)
