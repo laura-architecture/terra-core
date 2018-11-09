@@ -155,7 +155,7 @@ module.exports.createTemperatureEvent = function() {
   return {
     id: random(1, 2),
     port: random(9002, 9005),
-    source: 20, //random(10, 34), // should match ids from config file
+    id_mote: random(20, 29),
     gateway_time: new Date().getTime() - random(400, 500),
     counter: i++,
     temperature: !['c1', 'c2', 'c3'].includes(process.env.NODE_ENV)
@@ -167,7 +167,7 @@ module.exports.createLocationEvent = function() {
   return {
     id: random(1, 2),
     port: random(9002, 9005),
-    source: 20, //random(10, 34), // should match ids from config file
+    id_mote: random(20, 29), // id_mote: 20,
     gateway_time: new Date().getTime() - random(400, 500),
     counter: i++,
     location: values.temp1.shift(),

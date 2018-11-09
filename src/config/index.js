@@ -10,13 +10,13 @@ config.db_password = ''
 config.db_database = 'terra-db'
 
 config.networks = [
-  {
-    id: '01',
-    port: '9002',
-    address: '192.168.2.128',
-    model: 'TELOSB',
-    mote_ids: [10, 11, 12, 13, 14, 15]
-  },
+  // {
+  //   id: '01',
+  //   port: '9002',
+  //   address: '192.168.2.128',
+  //   model: 'TELOSB',
+  //   mote_ids: [10, 11, 12, 13, 14, 15]
+  // },
   {
     id: '02',
     port: '9003',
@@ -24,13 +24,13 @@ config.networks = [
     model: 'MDA100',
     mote_ids: [20, 21, 22, 23, 24, 25, 26, 27, 28, 29]
   },
-  {
-    id: '03',
-    port: '9004',
-    address: '192.168.2.128',
-    model: 'MDA100',
-    mote_ids: [30, 31, 32, 33, 34]
-  }
+  // {
+  //   id: '03',
+  //   port: '9004',
+  //   address: '192.168.2.128',
+  //   model: 'MDA100',
+  //   mote_ids: [30, 31, 32, 33, 34]
+  // }
 ]
 
 config.id_temperature_event = 1
