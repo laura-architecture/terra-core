@@ -8,6 +8,11 @@ const sht1x_temperature = require('../../helpers/sht1x-temperature')
 const moment = require('moment')
 const { createTemperatureEvent, createLocationEvent } = require('../../helpers/simulation')
 const db = require('../../helpers/fake-db')
+const axios = require('axios')
+
+// Helpers for toggling the attending status
+let iteration = 0
+let currentStatus = 'BUSY'
 
 /**
  * Initializes connections
@@ -55,27 +60,6 @@ const Event = e => {
  * @param {*} raw_event Raw event data
  */
 const dispatchEvent = raw_event => {
-  // console.log(
-  // ` ${chalk.bold('📥 Event received from mote ' + raw_event.source)}`
-  // )
-
-  /*const curr_time = moment()
-  console.log('curr_time:------------')
-  console.log(curr_time)
-  console.log('------------------')
-
-  const gateway_time = moment(raw_event.gateway_time)
-
-  console.log('gateway_time:------------')
-  console.log(gateway_time)
-  console.log('------------------')
-
-  const delay = curr_time.diff(gateway_time, 'milliseconds')
-
-  console.log('Daley:------------')
-  console.log(delay)
-  console.log('------------------')*/
-
   const event = Event(raw_event)
 
   convert(event)
@@ -95,11 +79,29 @@ const dispatchEvent = raw_event => {
   console.log(` ${chalk.bold('📥:', JSON.stringify(temperatureEvent))}`)
   console.log(` ${chalk.bold('📥:', JSON.stringify(locationEvent))}`)
 
-  // parse gateway_time
-  // event.gateway_time = new Date(event.gateway_time)
+  const temperaturePayload = {
+    timestamp: Date.now(),
+    entries: { value: temperatureEvent.temperature },
+  }
 
-  // save to database (ACHO QUE PARA O EXPERIMENTO NÃO PRECISA SALVAR NO BANCO TA GERANDO DELAY)
-  //eventModel.addEvent(event)
+  axios
+    .post('https://lcb.multicast.vix.br/entities/2/contexts/3/values', temperaturePayload)
+    .then(res => console.log('Sent temperature: ' + temperatureEvent.temperature))
+
+  if (iteration % 5 === 0) {
+    currentStatus === 'BUSY' ? (currentStatus = 'ATTENDING') : (currentStatus = 'BUSY')
+
+    const statusPayload = {
+      timestamp: Date.now(),
+      entries: { status: currentStatus },
+    }
+
+    axios
+      .post('https://lcb.multicast.vix.br/entities/2/contexts/3/values', statusPayload)
+      .then(res => console.log('Changed status to: ' + currentStatus))
+  }
+
+  iteration++
 
   return event
 }
