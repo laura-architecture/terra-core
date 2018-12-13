@@ -4,70 +4,7 @@ const app = require('../index')
 let i = 0
 
 const values = {
-  c1: [
-    -19,
-    -18,
-    -17,
-    -16,
-    -15,
-    -14,
-    -13,
-    -12,
-    -11,
-    -10,
-    -9,
-    -8,
-    -7,
-    -6,
-    -5,
-    -4,
-    -3,
-    -2,
-    -1,
-    -0,
-    1,
-    2,
-    3,
-    4,
-    5,
-    6,
-    7,
-    8,
-    9,
-    10,
-    11,
-    12,
-    13,
-    14,
-    13,
-    12,
-    11,
-    10,
-    9,
-    8,
-    7,
-    6,
-    5,
-    4,
-    3,
-    2,
-    1,
-    0,
-    -1,
-    -2,
-    -3,
-    -4,
-    -5,
-    -6,
-    -7,
-    -8,
-    -9,
-    -10,
-    -12,
-    -13,
-    -14,
-    -15,
-  ],
+  c1: [-10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0],
   c2: [
     -17,
     -15,
@@ -151,7 +88,7 @@ const values = {
   ],
 }
 
-module.exports.createTemperatureEvent = function() {
+function createTemperatureEvent() {
   return {
     id: random(1, 2),
     port: random(9002, 9005),
@@ -163,7 +100,8 @@ module.exports.createTemperatureEvent = function() {
       : values[process.env.NODE_ENV].shift(),
   }
 }
-module.exports.createLocationEvent = function() {
+
+function createLocationEvent() {
   return {
     id: random(1, 2),
     port: random(9002, 9005),
@@ -173,3 +111,5 @@ module.exports.createLocationEvent = function() {
     location: values.temp1.shift(),
   }
 }
+
+module.exports = { values, createLocationEvent, createTemperatureEvent }

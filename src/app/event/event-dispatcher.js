@@ -6,13 +6,18 @@ const chalk = require('chalk')
 const mda100_temperature = require('../../helpers/mda100-temperature')
 const sht1x_temperature = require('../../helpers/sht1x-temperature')
 const moment = require('moment')
-const { createTemperatureEvent, createLocationEvent } = require('../../helpers/simulation')
+const {
+  createTemperatureEvent,
+  createLocationEvent,
+  values: simulationValues,
+} = require('../../helpers/simulation')
 const db = require('../../helpers/fake-db')
 const axios = require('axios')
 
 // Helpers for toggling the attending status
 let iteration = 0
 let currentStatus = 'BUSY'
+let tttValue = 0
 
 /**
  * Initializes connections
@@ -76,29 +81,60 @@ const dispatchEvent = raw_event => {
   io.emit('message', temperatureEvent)
   io.emit('message', locationEvent)
 
-  console.log(` ${chalk.bold('📥:', JSON.stringify(temperatureEvent))}`)
-  console.log(` ${chalk.bold('📥:', JSON.stringify(locationEvent))}`)
+  // console.log(` ${chalk.bold('📥:', JSON.stringify(temperatureEvent))}`)
+  // console.log(` ${chalk.bold('📥:', JSON.stringify(locationEvent))}`)
+  console.log(` ${chalk.bold('📥: i: ', iteration)}`)
 
   const temperaturePayload = {
     timestamp: Date.now(),
     entries: { value: temperatureEvent.temperature },
   }
 
-  axios
-    .post('https://lcb.multicast.vix.br/entities/2/contexts/3/values', temperaturePayload)
-    .then(res => console.log('Sent temperature: ' + temperatureEvent.temperature))
+  currentStatus === 'BUSY' ? (currentStatus = 'ATTENDING') : (currentStatus = 'BUSY')
 
-  if (iteration % 5 === 0) {
-    currentStatus === 'BUSY' ? (currentStatus = 'ATTENDING') : (currentStatus = 'BUSY')
+  // tttValue === 0 ? (tttValue = 300) : (tttValue = 0)
+  tttValue === 0
+
+  if (process.env.NODE_ENV === 'c1') {
+    axios
+      .post('http://localhost:9999/entities/2/contexts/3/values', temperaturePayload)
+      .then(res => console.log('Sent temperature: ' + temperatureEvent.temperature))
+
+    if (simulationValues.c1.length === 0) process.exit(0)
+  }
+
+  if (process.env.NODE_ENV === 'c2') {
+    const tttPayload = {
+      timestamp: Date.now(),
+      entries: { ttt: tttValue },
+    }
 
     const statusPayload = {
       timestamp: Date.now(),
       entries: { status: currentStatus },
     }
 
-    axios
-      .post('https://lcb.multicast.vix.br/entities/2/contexts/3/values', statusPayload)
-      .then(res => console.log('Changed status to: ' + currentStatus))
+    if (iteration === 0) {
+      axios
+        .post('http://localhost:9999/relations/7/values', tttPayload)
+        .then(() => console.log('Sent ttt: ' + tttValue))
+    }
+
+    if(iteration === 5){
+      tttValue = 300
+
+      axios
+        .post('http://localhost:9999/relations/7/values', tttPayload)
+        .then(() => console.log('Sent ttt: ' + tttValue))
+    }
+
+    if (iteration % 5 === 0) {
+      axios
+        .post('http://localhost:9999/relations/6/values', statusPayload)
+        .then(() => console.log('Changed status to: ' + currentStatus))
+    }
+
+    if (iteration === 15) process.exit(0)
   }
 
   iteration++
